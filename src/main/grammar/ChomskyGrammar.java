@@ -34,7 +34,7 @@ public class ChomskyGrammar extends Grammar {
 				);
 			} else if (line.length() == 3) { //To terminal
 				addTerminal(line.charAt(2), getNonTerminalID(nonTerminals, line.charAt(0)));
-			} else {
+			} else if (line.length() != 0) {
 				throw new Exception("File format error");
 			}
 		}
