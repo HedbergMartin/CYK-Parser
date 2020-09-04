@@ -35,6 +35,8 @@ public class ChomskyGrammar extends Grammar {
 			} else if (line.length() == 3) { //To terminal
 				addTerminal(line.charAt(2), getNonTerminalID(nonTerminals, line.charAt(0)));
 			} else if (line.length() != 0) {
+				fileScanner.close();
+				stream.close();
 				throw new Exception("File format error");
 			}
 		}
@@ -45,6 +47,7 @@ public class ChomskyGrammar extends Grammar {
 			addRule(line.charAt(0) - '0', line.charAt(1)  - '0', line.charAt(2) - '0');
 		}
 		
+		fileScanner.close();
 		stream.close();
 	}
 	
