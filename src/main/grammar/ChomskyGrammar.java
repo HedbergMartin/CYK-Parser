@@ -57,4 +57,9 @@ public class ChomskyGrammar extends Grammar {
 		}
 		return nonTerminals.get(nonTerminal);
 	}
+
+	@Override
+	public int getInitial() {
+		return 0;
+	}
 }
