@@ -1,6 +1,7 @@
 package main.parser;
 
 import main.grammar.Grammar;
+import main.grammar.Rhs;
 
 public class Parser {
 
@@ -14,13 +15,12 @@ public class Parser {
 		if (i == j-1) {
 			return g.terminalRule(s.charAt(i), nonTerminal);
 		} else {
-			int C;
-			for (int B = 0; B < g.rules.length; B++) {
-				if ((C = g.rules[nonTerminal][B]) != -1) {
-					for (int k = i + 1; k <= j - 1; k++) {
-						if (parseNaiveRec(s, g, B, i, k) && parseNaiveRec(s, g, C, k, j)) {
-							return true;
-						}
+			Rhs rhs;
+			for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
+				rhs = g.getRule(nonTerminal, ruleNr);
+				for (int k = i + 1; k <= j - 1; k++) {
+					if (parseNaiveRec(s, g, rhs.B, i, k) && parseNaiveRec(s, g, rhs.C, k, j)) {
+						return true;
 					}
 				}
 			}

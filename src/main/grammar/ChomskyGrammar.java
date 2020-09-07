@@ -23,13 +23,12 @@ public class ChomskyGrammar extends Grammar {
 		Scanner fileScanner = new Scanner(stream, "ASCII");
 		
 		HashMap<Character, Integer> nonTerminals = new HashMap<Character, Integer>();
-		ArrayList<String> nonTerminalLines = new ArrayList<String>();
 		while (fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();
 			if (line.length() == 4) { //To non-terminals
-				nonTerminalLines.add(""+
-				getNonTerminalID(nonTerminals, line.charAt(0)) +
-				getNonTerminalID(nonTerminals, line.charAt(2)) +
+				addRule(
+				getNonTerminalID(nonTerminals, line.charAt(0)),
+				getNonTerminalID(nonTerminals, line.charAt(2)),
 				getNonTerminalID(nonTerminals, line.charAt(3))
 				);
 			} else if (line.length() == 3) { //To terminal
@@ -39,12 +38,6 @@ public class ChomskyGrammar extends Grammar {
 				stream.close();
 				throw new Exception("File format error");
 			}
-		}
-		
-		initRules(nonTerminals.size());
-		
-		for (String line: nonTerminalLines) {
-			addRule(line.charAt(0) - '0', line.charAt(1)  - '0', line.charAt(2) - '0');
 		}
 		
 		fileScanner.close();

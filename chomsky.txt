@@ -1,7 +1,8 @@
-S AB
-A BB
-A CB
+S SS
+S LA
+S LR
+A SR
 
-B x
-A y
-C s
+L (
+R )
+S a
