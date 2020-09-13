@@ -10,7 +10,8 @@ public class Main {
 		System.out.println(args[0]);
 		Grammar g = new ChomskyGrammar(args[0]);
 		String s = "((a))()()(((())))";
-		if (Parser.parseNaive(s, g)) {
+		//String s = "()(a)(())";
+		if (Parser.parseBottomUp(s, g)) {
 			System.out.println(s + " is in grammar");
 		} else {
 			System.out.println("Nope " + s);

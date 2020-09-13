@@ -5,27 +5,32 @@ import java.util.ArrayList;
 public abstract class Grammar {
 	private ArrayList<ArrayList<Rhs>> rules;
 	
-	private ArrayList<Character> terminalRules;
+	private ArrayList<ArrayList<Character>> terminalRules;
 	
 	public int amountOfNonTerminals = 0;
 	
 	public Grammar() {
-		terminalRules = new ArrayList<Character>();
+		terminalRules = new ArrayList<ArrayList<Character>>();
 		rules = new ArrayList<ArrayList<Rhs>>();
 	}
 	
 	public void addTerminal(int nonTerminalID, char terminal) {
 		while (terminalRules.size() <= nonTerminalID) {
-			terminalRules.add((char) 0);
+			terminalRules.add(new ArrayList<Character>());
 		}
-		terminalRules.set(nonTerminalID, terminal);
+		terminalRules.get(nonTerminalID).add(terminal);
 	}
 	
 	public boolean isTerminalRule(int nonTerminal, char terminal) {
 		if (terminalRules.size() <= nonTerminal) {
 			return false;
 		}
-		return terminalRules.get(nonTerminal) == terminal;
+		for (int i = 0; i < terminalRules.get(nonTerminal).size(); i++) {
+			if (terminalRules.get(nonTerminal).get(i) == terminal) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	
