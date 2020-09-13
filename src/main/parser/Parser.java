@@ -13,7 +13,7 @@ public class Parser {
 
 	private static boolean parseNaiveRec(String s, Grammar g, int nonTerminal, int i, int j) {
 		if (i == j-1) {
-			return g.terminalRule(s.charAt(i), nonTerminal);
+			return g.isTerminalRule(nonTerminal, s.charAt(i));
 		} else {
 			Rhs rhs;
 			for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
@@ -25,6 +25,14 @@ public class Parser {
 				}
 			}
 		}
+		return false;
+	}
+	
+	public static boolean parseBottomUp(String s, Grammar g) {
+		boolean[][][] table = new boolean[s.length()][s.length()][g.amountOfNonTerminals];
+		//for (int i = 0; i < s.length(); i++) {
+		//	for (int j = 0; j < g.)
+		//}
 		return false;
 	}
 }

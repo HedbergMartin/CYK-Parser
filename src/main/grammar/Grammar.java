@@ -1,29 +1,33 @@
 package main.grammar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public abstract class Grammar {
 	private ArrayList<ArrayList<Rhs>> rules;
 	
-	private HashMap<Character, Integer> terminalMap;
+	private ArrayList<Character> terminalRules;
+	
+	public int amountOfNonTerminals = 0;
 	
 	public Grammar() {
-		terminalMap = new HashMap<Character, Integer>();
+		terminalRules = new ArrayList<Character>();
 		rules = new ArrayList<ArrayList<Rhs>>();
 	}
 	
-	public void addTerminal(char terminal, int nonTerminalID) {
-		terminalMap.put(terminal, nonTerminalID);
+	public void addTerminal(int nonTerminalID, char terminal) {
+		while (terminalRules.size() <= nonTerminalID) {
+			terminalRules.add((char) 0);
+		}
+		terminalRules.set(nonTerminalID, terminal);
 	}
 	
-	public boolean terminalRule(char terminal, int nonTerminal) {
-		if (!terminalMap.containsKey(terminal)) {
+	public boolean isTerminalRule(int nonTerminal, char terminal) {
+		if (terminalRules.size() <= nonTerminal) {
 			return false;
 		}
-		return terminalMap.get(terminal) == nonTerminal;
+		return terminalRules.get(nonTerminal) == terminal;
 	}
+	
 	
 	public void addRule(int A, int B, int C) {
 		while (rules.size() <= A) {

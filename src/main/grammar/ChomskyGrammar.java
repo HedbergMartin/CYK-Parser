@@ -2,7 +2,6 @@ package main.grammar;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -32,13 +31,15 @@ public class ChomskyGrammar extends Grammar {
 				getNonTerminalID(nonTerminals, line.charAt(3))
 				);
 			} else if (line.length() == 3) { //To terminal
-				addTerminal(line.charAt(2), getNonTerminalID(nonTerminals, line.charAt(0)));
+				addTerminal(getNonTerminalID(nonTerminals, line.charAt(0)), line.charAt(2));
 			} else if (line.length() != 0) {
 				fileScanner.close();
 				stream.close();
 				throw new Exception("File format error");
 			}
 		}
+
+		amountOfNonTerminals = nonTerminals.size();
 		
 		fileScanner.close();
 		stream.close();
