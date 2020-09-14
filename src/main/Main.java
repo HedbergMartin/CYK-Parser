@@ -11,7 +11,7 @@ public class Main {
 		Grammar g = new ChomskyGrammar(args[0]);
 		String s = "((a))()()(((())))";
 		//String s = "()(a)(())";
-		if (Parser.parseBottomUp(s, g)) {
+		if (Parser.parseTopDown(s, g)) {
 			System.out.println(s + " is in grammar");
 		} else {
 			System.out.println("Nope " + s);
