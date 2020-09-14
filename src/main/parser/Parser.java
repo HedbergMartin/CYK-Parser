@@ -61,14 +61,13 @@ public class Parser {
 	
 	public static boolean parseTopDown(String s, Grammar g) {
 		//0 == null, 1 == no, 2 == yes
-		int[][][] table = new int[g.amountOfNonTerminals][s.length()+1][s.length()+1];
-		System.out.println(table[1][2][3]);
+		int[][][] table = new int[g.amountOfNonTerminals][s.length()][s.length()];
 		return parseTopDownRec(s, g, table, g.getInitial(), 0, s.length());
 	}
 	
 	private static boolean parseTopDownRec(String s, Grammar g, int[][][] table, int nonTerminal, int i, int j) {
 		int path;
-		if ((path = table[nonTerminal][i][j]) != 0) {
+		if ((path = table[nonTerminal][i][j-1]) != 0) {
 			if (path == 2) {
 				return true;
 			} else {
@@ -81,14 +80,14 @@ public class Parser {
 			for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
 				rhs = g.getRule(nonTerminal, ruleNr);
 				for (int k = i + 1; k <= j - 1; k++) {
-					if (parseNaiveRec(s, g, rhs.B, i, k) && parseNaiveRec(s, g, rhs.C, k, j)) {
-						table[nonTerminal][i][j] = 2;
+					if (parseTopDownRec(s, g, table, rhs.B, i, k) && parseTopDownRec(s, g, table, rhs.C, k, j)) {
+						table[nonTerminal][i][j-1] = 2;
 						return true;
 					}
 				}
 			}
 		}
-		table[nonTerminal][i][j] = 1;
+		table[nonTerminal][i][j-1] = 1;
 		return false;
 	}
 }
