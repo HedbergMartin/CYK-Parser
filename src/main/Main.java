@@ -3,6 +3,7 @@ package main;
 import main.grammar.ChomskyGrammar;
 import main.grammar.Grammar;
 import main.parser.Parser;
+import main.parser.Result;
 
 public class Main {
 
@@ -10,12 +11,12 @@ public class Main {
 		System.out.println(args[0]);
 		Grammar g = new ChomskyGrammar(args[0]);
 		String s = "((a))()()(((())))";
-		//String s = "()(a)(())";
-		if (Parser.parseTopDown(s, g)) {
-			System.out.println(s + " is in grammar");
-		} else {
-			System.out.println("Nope " + s);
-		}
+		Result naiveRes = Parser.parseNaive(s, g);
+		Result bottomupRes = Parser.parseBottomUp(s, g);
+		Result topdownRes = Parser.parseTopDown(s, g);
+		naiveRes.print();
+		bottomupRes.print();
+		topdownRes.print();
 	}
 
 }
