@@ -4,11 +4,15 @@ public class Result {
 	
 	public boolean wasFound;
 	public int strLen;
-	public int ops;
-	public long nanoSec;
+	public long ops;
+	public double time;
 	
 	public void print() {
-		System.out.println("Was found: " + wasFound + ", Len: " + strLen + ", Time taken: " + nanoSec + ", Opetations: " + ops);
+		System.out.println("Was found: " + wasFound + ", Len: " + strLen + ", Time taken: " + time + ", Opetations: " + ops);
+	}
+	
+	public void printExcel() {
+		System.out.println(strLen + "	" + time + "	" + ops);
 	}
 
 }

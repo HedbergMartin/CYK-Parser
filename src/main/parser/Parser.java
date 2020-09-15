@@ -4,6 +4,8 @@ import main.grammar.Grammar;
 import main.grammar.Rhs;
 
 public class Parser {
+	
+	final static long NANOSEC = 1000000000;
 
 	public static Result parseNaive(String s, Grammar g) {
 		Result r = new Result();
@@ -11,7 +13,7 @@ public class Parser {
 		long start = System.nanoTime();
 		r.wasFound = parseNaiveRec(r, s, g, g.getInitial(), 0, s.length());
 		long end = System.nanoTime();
-		r.nanoSec = end - start;
+		r.time = (double)(end - start) / NANOSEC;
 		r.strLen = s.length();
 		return r;
 	}
@@ -73,7 +75,7 @@ public class Parser {
 		}
 
 		long end = System.nanoTime();
-		r.nanoSec = end - start;
+		r.time = (double)(end - start) / NANOSEC;
 		r.wasFound = found;
 		return r;
 	}
@@ -87,7 +89,7 @@ public class Parser {
 		int[][][] table = new int[g.amountOfNonTerminals][s.length()][s.length()];
 		r.wasFound = parseTopDownRec(r, s, g, table, g.getInitial(), 0, s.length());
 		long end = System.nanoTime();
-		r.nanoSec = end - start;
+		r.time = (double)(end - start) / NANOSEC;
 		r.strLen = s.length();
 		return r;
 	}

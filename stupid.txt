@@ -1,0 +1,4 @@
+S ST
+S TS
+
+T a
