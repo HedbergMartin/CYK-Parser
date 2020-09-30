@@ -14,6 +14,12 @@ public class Main {
 		runTopDownSlow(g);
 		runTopDownFast(g);
 		runStupid();
+		
+		runTopDownOpen(g);
+		runGroupedRepeat(g);
+		
+//		runNaive(new OpenClose(1, 1, 3000, "(", ")"), g);
+		
 	}
 	
 	public static void runBottomUpBenchmarks(Grammar g) {
@@ -63,9 +69,41 @@ public class Main {
 		runTopDownBenchmark(new Stupid(increment, increment, end), g, 1);
 	}
 	
+	public static void runGroupedRepeat(Grammar g) {
+		int increment = 600;
+		int end = 10200;
+		System.out.println("Top down (()())..(()())\n");
+		runTopDownBenchmark(new Repeat(increment/6, increment/6, end/6, "(()())"), g, 10);
+
+		System.out.println("Top down fast ()...()\n");
+		runTopDownBenchmark(new Repeat(increment/2, increment/2, end/2, "()"), g, 10);
+
+	}
+	
+	public static void runTopDownOpen(Grammar g) {
+		int increment = 100/2;
+		int end = 2500/2;
+		System.out.println("Top down )()..()\n");
+		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", ")", "", ""), g, 1);
+		
+		System.out.println("Top down ()..)..()\n");
+		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", "", ")", ""), g, 1);
+		
+		System.out.println("Top down ()..())\n");
+		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", "", "", ")"), g, 1);
+
+	}
+	
 	public static void runBottomUpBenchmark(Input i, Grammar g) {
 		while (i.hasMoreElements()) {
 			Parser.parseBottomUp(i.nextElement(), g).printExcel();
+		}
+	}
+	
+	public static void runNaive(Input i, Grammar g) {
+		while (i.hasMoreElements()) {
+			String s = i.nextElement();
+			Parser.parseNaive(s, g).printExcel();
 		}
 	}
 	

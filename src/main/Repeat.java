@@ -11,6 +11,8 @@ public class Repeat extends Input {
 	
 	public Repeat(int start, int increment, int end, String pattern, String head, String tail) {
 		this(start, increment, end, pattern);
+		this.head = head;
+		this.tail = tail;
 	}
 
 	@Override

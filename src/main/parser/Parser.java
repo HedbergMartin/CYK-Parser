@@ -81,7 +81,7 @@ public class Parser {
 		Result r = new Result();
 		long start = System.nanoTime();
 		//0 == null, 1 == no, 2 == yes
-		int[][][] table = new int[g.amountOfNonTerminals][s.length()][s.length()];
+		byte[][][] table = new byte[g.amountOfNonTerminals][s.length()][s.length()];
 		r.wasFound = parseTopDownRec(r, s, g, table, g.getInitial(), 0, s.length());
 		long end = System.nanoTime();
 		r.time = (double)(end - start) / NANOSEC;
@@ -90,7 +90,7 @@ public class Parser {
 	}
 	
 	//nonTerminal + i * g.amountOfNonTerminals + (j-1) * g.amountOfNonTerminals * s.length()
-	private static boolean parseTopDownRec(Result r, String s, Grammar g, int[][][] table, int nonTerminal, int i, int j) {
+	private static boolean parseTopDownRec(Result r, String s, Grammar g, byte[][][] table, int nonTerminal, int i, int j) {
 		int path;
 		if ((path = table[nonTerminal][i][j-1]) != 0) {
 			if (path == 2) {
