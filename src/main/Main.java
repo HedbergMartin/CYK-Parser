@@ -10,11 +10,6 @@ public class Main {
 	public static void main(String[] args) {
 		Grammar g = new ChomskyGrammar("parentheses.txt");
 
-
-//		runBottomUpBenchmark(new OpenClose(500, 500, 500), g);
-//		runBottomUpBenchmark(new Repeat(500, 500, 500), g);
-		//1500	21.6421805	2250005000	true
-
 		runBottomUpBenchmarks(g);
 		runTopDownSlow(g);
 		runTopDownFast(g);
@@ -22,45 +17,45 @@ public class Main {
 	}
 	
 	public static void runBottomUpBenchmarks(Grammar g) {
-		int increment = 100;
-		int end = 2500;
+		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+		int end = 2500/2;
 		System.out.println("Bottom up ((...))\n");
-		runBottomUpBenchmark(new OpenClose(increment, increment, end), g);
+		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")"), g);
 
 		System.out.println("Bottom up ()...()\n");
-		runBottomUpBenchmark(new Repeat(increment, increment, end), g);
+		runBottomUpBenchmark(new Repeat(increment, increment, end, "()"), g);
 		
 		System.out.println("Bottom up ()...())\n");
-		runBottomUpBenchmark(new Repeat(increment, increment, end, "", ")"), g);
+		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", "", ")"), g);
 		
 		System.out.println("Bottom up )()...()\n");
-		runBottomUpBenchmark(new Repeat(increment, increment, end, ")", ""), g);
+		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", ")", ""), g);
 	}
 	
 	public static void runTopDownSlow(Grammar g) {
-		int increment = 100;
-		int end = 2500;
+		int increment = 100/2;
+		int end = 2500/2;
 		System.out.println("Top down slow ((...))\n");
-		runTopDownBenchmark(new OpenClose(increment, increment, end), g, 1);
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")"), g, 1);
 
 		System.out.println("Top down slow ()...()(\n");
-		runTopDownBenchmark(new Repeat(increment, increment, end, "", "("), g, 1);
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()", "", "("), g, 1);
 	}
 	
 	public static void runTopDownFast(Grammar g) {
-		int increment = 400;
-		int end = 10000;
+		int increment = 400/2;
+		int end = 10000/2;
 		System.out.println("Top down fast ()...()\n");
-		runTopDownBenchmark(new Repeat(increment, increment, end), g, 10);
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()"), g, 10);
 
 		System.out.println("Top down fast )()...()\n");
-		runTopDownBenchmark(new Repeat(increment, increment, end, ")", ""), g, 10);
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()", ")", ""), g, 10);
 	}
 	
 	public static void runStupid() {
 		Grammar g = new ChomskyGrammar("stupid.txt");
-		int increment = 100;
-		int end = 2500;
+		int increment = 100/2;
+		int end = 2500/2;
 		System.out.println("Stupid bottom up\n");
 		runBottomUpBenchmark(new Stupid(increment, increment, end), g);
 

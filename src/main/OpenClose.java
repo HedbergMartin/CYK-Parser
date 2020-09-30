@@ -2,26 +2,31 @@ package main;
 
 public class OpenClose extends Input {
 
-	public OpenClose(int start, int increment, int end) {
+	String opener, closer, head = "", tail = "";
+	
+	public OpenClose(int start, int increment, int end, String opener, String closer) {
 		super(start, increment, end);
+		this.opener = opener;
+		this.closer = closer;
 	}
 	
-	public OpenClose(int start, int increment, int end, String head, String tail) {
-		super(start, increment, end, head, tail);
+	public OpenClose(int start, int increment, int end, String opener, String closer, String head, String tail) {
+		this(start, increment, end, opener, closer);
+		this.head = head;
+		this.tail = tail;
 	}
 
 	@Override
 	public String nextElement() {
 		String next = head;
-		for (int i = 0; i < count/2; i++) {
-			next += "(";
+		for (int i = 0; i < count; i++) {
+			next += opener;
 		}
-		for (int i = 0; i < count/2; i++) {
-			next += ")";
+		for (int i = 0; i < count; i++) {
+			next += closer;
 		}
 		next += tail;
 		count += increment;
 		return next;
 	}
-
 }
