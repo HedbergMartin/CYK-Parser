@@ -9,7 +9,6 @@ public class Parser {
 
 	public static Result parseNaive(String s, Grammar g) {
 		Result r = new Result();
-		r.ops = 0;
 		long start = System.nanoTime();
 		r.wasFound = parseNaiveRec(r, s, g, g.getInitial(), 0, s.length());
 		long end = System.nanoTime();
@@ -21,7 +20,6 @@ public class Parser {
 
 
 	private static boolean parseNaiveRec(Result r, String s, Grammar g, int nonTerminal, int i, int j) {
-		r.ops++;
 		if (i == j-1) {
 			return g.isTerminalRule(nonTerminal, s.charAt(i));
 		} else {
@@ -40,7 +38,6 @@ public class Parser {
 	
 	public static Result parseBottomUp(String s, Grammar g) {
 		Result r = new Result();
-		r.ops = 0;
 		r.strLen = s.length();
 		long start = System.nanoTime();
 		boolean found = false;
@@ -48,22 +45,21 @@ public class Parser {
 		for (int i = 0; i < s.length(); i++) {
 			for (int j = 0; j < g.amountOfNonTerminals; j++) {
 				table[j][0][i] = g.isTerminalRule(j, s.charAt(i));
-				r.ops++;
 			}
 		}
 		
 		for (int l = 1; l < s.length(); l++) {
 			for (int i = 0; i < s.length() - l; i++) {
-				for (int p = 0; p < l; p++) {
-					Rhs rhs;
-					for (int nonTerminal = 0; nonTerminal < g.amountOfNonTerminals; nonTerminal++) {
-						for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
-							rhs = g.getRule(nonTerminal, ruleNr);
-							
+				nonTerminalLoop:
+				for (int nonTerminal = 0; nonTerminal < g.amountOfNonTerminals; nonTerminal++) {
+					for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
+						Rhs rhs = g.getRule(nonTerminal, ruleNr);
+
+						for (int p = 0; p < l; p++) {
 							if (table[rhs.B][p][i] && table[rhs.C][l-p-1][i+p+1]) {
 								table[nonTerminal][l][i] = true;
+								continue nonTerminalLoop;
 							}
-							r.ops++;
 						}
 					}
 				}
@@ -83,7 +79,6 @@ public class Parser {
 	public static Result parseTopDown(String s, Grammar g) {
 
 		Result r = new Result();
-		r.ops = 0;
 		long start = System.nanoTime();
 		//0 == null, 1 == no, 2 == yes
 		int[][][] table = new int[g.amountOfNonTerminals][s.length()][s.length()];
@@ -94,8 +89,8 @@ public class Parser {
 		return r;
 	}
 	
+	//nonTerminal + i * g.amountOfNonTerminals + (j-1) * g.amountOfNonTerminals * s.length()
 	private static boolean parseTopDownRec(Result r, String s, Grammar g, int[][][] table, int nonTerminal, int i, int j) {
-		r.ops++;
 		int path;
 		if ((path = table[nonTerminal][i][j-1]) != 0) {
 			if (path == 2) {

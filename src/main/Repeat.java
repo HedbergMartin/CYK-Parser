@@ -13,7 +13,7 @@ public class Repeat extends Input {
 	@Override
 	public String nextElement() {
 		String next = head;
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count/2; i++) {
 			next += "()";
 		}
 		next += tail;

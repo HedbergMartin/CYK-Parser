@@ -4,7 +4,6 @@ public class Stupid extends Input {
 
 	public Stupid(int start, int increment, int end) {
 		super(start, increment, end);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -13,6 +12,7 @@ public class Stupid extends Input {
 		for (int i = 0; i < count; i++) {
 			next += "a";
 		}
+		count += increment;
 		return next;
 	}
 	
