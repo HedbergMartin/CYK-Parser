@@ -29,4 +29,9 @@ public class OpenClose extends Input {
 		count += increment;
 		return next;
 	}
+
+	@Override
+	public String getName() {
+		return this.head + this.opener + this.opener + ".." + this.closer + this.closer + this.tail;
+	}
 }

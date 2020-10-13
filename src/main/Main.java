@@ -1,60 +1,178 @@
 package main;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import main.grammar.ChomskyGrammar;
 import main.grammar.Grammar;
 import main.parser.Parser;
 import main.parser.Result;
 
 public class Main {
+	
+	public static String filename;
 
 	public static void main(String[] args) {
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+		Date date = new Date(System.currentTimeMillis());
+		filename = "tests" + formatter.format(date) + ".txt";
+		
 		Grammar g = new ChomskyGrammar("parentheses.txt");
 
-		runBottomUpBenchmarks(g);
-		runTopDownSlow(g);
-		runTopDownFast(g);
-		runStupid();
+		runBottomUp(g);
 		
-		runTopDownOpen(g);
-		runGroupedRepeat(g);
+		runTopDown(g);
+		
+//		runBottomUpBaseCase(g);
+//		runTopDownSlow(g);
+//		runTopDownFast(g);
+//		runStupid();
+//		
+//		runTopDownOpen(g);
+//		
+//		runGroupedRepeat(g);
 		
 //		runNaive(new OpenClose(1, 1, 3000, "(", ")"), g);
-		
 	}
 	
-	public static void runBottomUpBenchmarks(Grammar g) {
+	public static void writeToFile(String input) {
+		try {
+			FileWriter file = new FileWriter(filename, true);
+			file.write(input);
+			file.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void runBottomUp(Grammar g) {
+		runBottomUpBaseCase(g);
+		runBottomUpEarlyRule(g);
+		runBottomUpEarlyVsLate(g);
+		runBottomUpUnknownClose(g);
+	}
+
+	public static void runTopDown(Grammar g) {
+		runTopDownBaseCase(g);
+		runTopDownEarlyRule(g);
+		runTopDownEarlyVsLate(g);
+		runTopDownUnknownClose(g);
+	}
+	
+	public static void runBottomUpBaseCase(Grammar g) {
 		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
 		int end = 2500/2;
-		System.out.println("Bottom up ((...))\n");
-		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")"), g);
 
-		System.out.println("Bottom up ()...()\n");
 		runBottomUpBenchmark(new Repeat(increment, increment, end, "()"), g);
 		
-		System.out.println("Bottom up ()...())\n");
-		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", "", ")"), g);
+		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", ")", "("), g);
+
+		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")"), g);
 		
-		System.out.println("Bottom up )()...()\n");
+		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", ")", "("), g);
+	}
+
+	public static void runBottomUpEarlyRule(Grammar g) {
+		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+		int end = 2500/2;
+
+		//See basecase
+		
+		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", "()", "()"), g);
+	}
+
+	public static void runBottomUpEarlyVsLate(Grammar g) {
+		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+		int end = 2500/2;
+
 		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", ")", ""), g);
+		
+		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", "", "("), g);
+
+		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", ")", ""), g);
+		
+		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", "", "("), g);
+	}
+
+	public static void runBottomUpUnknownClose(Grammar g) {
+		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+		int end = 2500/2;
+
+		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", "(", ""), g);
+		
+		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", "", ")"), g);
+
+		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", "(", ""), g);
+		
+		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", "", ")"), g);
+	}
+	
+	// Top-down part
+	public static void runTopDownBaseCase(Grammar g) {
+		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+		int end = 2500/2;
+
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()"), g, 1);
+		
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()", ")", "("), g, 1);
+
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")"), g, 1);
+		
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", ")", "("), g, 1);
+	}
+
+	public static void runTopDownEarlyRule(Grammar g) {
+		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+		int end = 2500/2;
+
+		//See basecase
+		
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "()", "()"), g, 1);
+	}
+
+	public static void runTopDownEarlyVsLate(Grammar g) {
+		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+		int end = 2500/2;
+
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()", ")", ""), g, 1);
+		
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()", "", "("), g, 1);
+
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", ")", ""), g, 1);
+		
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "", "("), g, 1);
+	}
+
+	public static void runTopDownUnknownClose(Grammar g) {
+		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+		int end = 2500/2;
+
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()", "(", ""), g, 1);
+		
+		runTopDownBenchmark(new Repeat(increment, increment, end, "()", "", ")"), g, 1);
+
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "(", ""), g, 1);
+		
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "", ")"), g, 1);
 	}
 	
 	public static void runTopDownSlow(Grammar g) {
 		int increment = 100/2;
 		int end = 2500/2;
-		System.out.println("Top down slow ((...))\n");
+		
 		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")"), g, 1);
 
-		System.out.println("Top down slow ()...()(\n");
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()", "", "("), g, 1);
 	}
 	
 	public static void runTopDownFast(Grammar g) {
 		int increment = 400/2;
 		int end = 10000/2;
-		System.out.println("Top down fast ()...()\n");
+		
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()"), g, 10);
 
-		System.out.println("Top down fast )()...()\n");
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()", ")", ""), g, 10);
 	}
 	
@@ -62,20 +180,18 @@ public class Main {
 		Grammar g = new ChomskyGrammar("stupid.txt");
 		int increment = 100/2;
 		int end = 2500/2;
-		System.out.println("Stupid bottom up\n");
+		
 		runBottomUpBenchmark(new Stupid(increment, increment, end), g);
 
-		System.out.println("Stupid top down\n");
 		runTopDownBenchmark(new Stupid(increment, increment, end), g, 1);
 	}
 	
 	public static void runGroupedRepeat(Grammar g) {
 		int increment = 600;
 		int end = 10200;
-		System.out.println("Top down (()())..(()())\n");
+		
 		runTopDownBenchmark(new Repeat(increment/6, increment/6, end/6, "(()())"), g, 10);
 
-		System.out.println("Top down fast ()...()\n");
 		runTopDownBenchmark(new Repeat(increment/2, increment/2, end/2, "()"), g, 10);
 
 	}
@@ -83,31 +199,48 @@ public class Main {
 	public static void runTopDownOpen(Grammar g) {
 		int increment = 100/2;
 		int end = 2500/2;
-		System.out.println("Top down )()..()\n");
+		
 		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", ")", "", ""), g, 1);
 		
-		System.out.println("Top down ()..)..()\n");
 		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", "", ")", ""), g, 1);
 		
-		System.out.println("Top down ()..())\n");
 		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", "", "", ")"), g, 1);
 
 	}
 	
 	public static void runBottomUpBenchmark(Input i, Grammar g) {
+		System.out.println("Bottom-up " + i.getName() + "\n");
+		writeToFile("Bottom-up " + i.getName());
+		
 		while (i.hasMoreElements()) {
-			Parser.parseBottomUp(i.nextElement(), g).printExcel();
+			Result res = Parser.parseBottomUp(i.nextElement(), g);
+
+			writeToFile(res.excelFormat() + "\n");
+			System.out.println(res.excelFormat());
 		}
+		System.out.println("\n");
+		writeToFile("\n");
 	}
 	
 	public static void runNaive(Input i, Grammar g) {
+		System.out.println("Naive " + i.getName() + "\n");
+		writeToFile("Naive " + i.getName());
+		
 		while (i.hasMoreElements()) {
 			String s = i.nextElement();
-			Parser.parseNaive(s, g).printExcel();
+			Result res = Parser.parseNaive(s, g);
+
+			writeToFile(res.excelFormat() + "\n");
+			System.out.println(res.excelFormat());
 		}
+		System.out.println("\n");
+		writeToFile("\n");
 	}
 	
 	public static void runTopDownBenchmark(Input i, Grammar g, int n) {
+		System.out.println("Top-down " + i.getName() + "\n");
+		writeToFile("Top-down " + i.getName());
+		
 		while (i.hasMoreElements()) {
 			Result res = new Result();
 			String s = i.nextElement();
@@ -118,8 +251,12 @@ public class Main {
 				res.time += r.time;
 			}
 			res.time /= n;
-			res.printExcel();
+			
+			writeToFile(res.excelFormat() + "\n");
+			System.out.println(res.excelFormat());
 		}
+		System.out.println("\n");
+		writeToFile("\n");
 	}
 
 }

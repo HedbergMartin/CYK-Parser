@@ -26,4 +26,9 @@ public class RepeatInsert extends Input {
 		count += increment;
 		return next;
 	}
+
+	@Override
+	public String getName() {
+		return this.head + this.pattern + ".." + this.middle + ".." + this.pattern + this.tail;
+	}
 }

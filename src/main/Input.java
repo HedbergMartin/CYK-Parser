@@ -18,4 +18,6 @@ public abstract class Input implements Enumeration<String> {
 	public boolean hasMoreElements() {
 		return count <= end;
 	}
+	
+	public abstract String getName();
 }

@@ -25,4 +25,9 @@ public class Repeat extends Input {
 		count += increment;
 		return next;
 	}
+
+	@Override
+	public String getName() {
+		return this.head + this.pattern + ".." + this.pattern + this.tail;
+	}
 }

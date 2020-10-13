@@ -11,8 +11,8 @@ public class Result {
 		System.out.println("Was found: " + wasFound + ", Len: " + strLen + ", Time taken: " + time + ", Opetations: ");
 	}
 	
-	public void printExcel() {
-		System.out.println(strLen + "	" + time + "	" + wasFound);
+	public String excelFormat() {
+		return strLen + "	" + time + "	" + wasFound;
 	}
 
 }

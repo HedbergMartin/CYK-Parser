@@ -15,7 +15,9 @@ public class Stupid extends Input {
 		count += increment;
 		return next;
 	}
-	
-	
 
+	@Override
+	public String getName() {
+		return "stupid";
+	}
 }
