@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import main.grammar.ChomskyGrammar;
+import main.grammar.LinearGrammar;
 import main.parser.Parser;
 import main.parser.Result;
 
@@ -19,23 +20,23 @@ public class Main {
 		Date date = new Date(System.currentTimeMillis());
 		new File("output").mkdir();
 		filename = "output/tests" + formatter.format(date) + ".txt";
-		
-		ChomskyGrammar g = new ChomskyGrammar("parentheses.txt");
 
-		runBottomUp(g);
+		ChomskyGrammar cg = new ChomskyGrammar("parentheses.txt");
+		LinearGrammar lg = new LinearGrammar("linear_grammar.txt");
+
+//		runBottomUp(cg);
+//		
+//		runTopDown(cg);
+//
+//		runStupid(cg);
 		
-		runTopDown(g);
-//		
-//		runBottomUpBaseCase(g);
-//		runTopDownSlow(g);
-//		runTopDownFast(g);
-//		runStupid();
-//		
-//		runTopDownOpen(g);
-//		
-//		runGroupedRepeat(g);
-		
-//		runNaive(new OpenClose(1, 1, 3000, "(", ")"), g);
+		runTDlinear(lg);
+		try {
+			runTDlinearToCNF(LinearGrammar.toChomsky("linear_grammar.txt"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void writeToFile(String input) {
@@ -129,7 +130,7 @@ public class Main {
 		int end = 2500/2;
 
 		//See basecase
-//		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")"), g, 1);
+		//runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")"), g, 1);
 		
 		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "()", "()"), g, 1);
 	}
@@ -159,23 +160,36 @@ public class Main {
 		
 		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "", ")"), g, 1);
 	}
-	
-	public static void runTopDownSlow(ChomskyGrammar g) {
-		int increment = 100/2;
-		int end = 2500/2;
-		
-		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")"), g, 1);
 
-		runTopDownBenchmark(new Repeat(increment, increment, end, "()", "", "("), g, 1);
+	// Linear
+	public static void runTDlinear(LinearGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
+		int end = 10000/2;
+
+		//runTopDownLinear(new Repeat(increment, increment, end, "()"), g, 1);
+		
+		//runTopDownLinear(new Repeat(increment, increment, end, "()", ")", "("), g, 1);
+
+		//runTopDownLinear(new OpenClose(increment, increment, end, "a", ")"), g, 1);
+
+		runTopDownLinear(new OpenClose(increment, increment, end, "a", "c", "", "", "b"), g, 1);
+		
+		runTopDownLinear(new OpenClose(increment, increment, end, "a", "c", "", "", "ba"), g, 1);
 	}
 	
-	public static void runTopDownFast(ChomskyGrammar g) {
-		int increment = 400/2;
+	public static void runTDlinearToCNF(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 10000/2;
-		
-		runTopDownBenchmark(new Repeat(increment, increment, end, "()"), g, 10);
 
-		runTopDownBenchmark(new Repeat(increment, increment, end, "()", ")", ""), g, 10);
+		//runTopDownLinear(new Repeat(increment, increment, end, "()"), g, 1);
+		
+		//runTopDownLinear(new Repeat(increment, increment, end, "()", ")", "("), g, 1);
+
+		//runTopDownLinear(new OpenClose(increment, increment, end, "a", ")"), g, 1);
+
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "a", "c", "", "", "b"), g, 1);
+		
+		runTopDownBenchmark(new OpenClose(increment, increment, end, "a", "c", "", "", "ba"), g, 1);
 	}
 	
 	public static void runStupid() {
@@ -188,31 +202,9 @@ public class Main {
 		runTopDownBenchmark(new Stupid(increment, increment, end), g, 1);
 	}
 	
-	public static void runGroupedRepeat(ChomskyGrammar g) {
-		int increment = 600;
-		int end = 10200;
-		
-		runTopDownBenchmark(new Repeat(increment/6, increment/6, end/6, "(()())"), g, 10);
-
-		runTopDownBenchmark(new Repeat(increment/2, increment/2, end/2, "()"), g, 10);
-
-	}
-	
-	public static void runTopDownOpen(ChomskyGrammar g) {
-		int increment = 100/2;
-		int end = 2500/2;
-		
-		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", ")", "", ""), g, 1);
-		
-		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", "", ")", ""), g, 1);
-		
-		runTopDownBenchmark(new RepeatInsert(increment, increment, end, "()", "", "", ")"), g, 1);
-
-	}
-	
 	public static void runBottomUpBenchmark(Input i, ChomskyGrammar g) {
 		System.out.println("Bottom-up " + i.getName() + "\n");
-		writeToFile("Bottom-up " + i.getName());
+		writeToFile("Bottom-up " + i.getName() + "\n");
 		
 		while (i.hasMoreElements()) {
 			Result res = Parser.parseBottomUp(i.nextElement(), g);
@@ -226,7 +218,7 @@ public class Main {
 	
 	public static void runNaive(Input i, ChomskyGrammar g) {
 		System.out.println("Naive " + i.getName() + "\n");
-		writeToFile("Naive " + i.getName());
+		writeToFile("Naive " + i.getName() + "\n");
 		
 		while (i.hasMoreElements()) {
 			String s = i.nextElement();
@@ -241,9 +233,32 @@ public class Main {
 	
 	public static void runTopDownBenchmark(Input i, ChomskyGrammar g, int n) {
 		System.out.println("Top-down " + i.getName() + "\n");
-		writeToFile("Top-down " + i.getName());
+		writeToFile("Top-down " + i.getName() + "\n");
 		
 		while (i.hasMoreElements()) {
+			Result res = new Result();
+			String s = i.nextElement();
+			for (int j = 0; j < n; j++) {
+				Result r = Parser.parseTopDown(s, g);
+				res.wasFound = r.wasFound;
+				res.strLen = r.strLen;
+				res.time += r.time;
+			}
+			res.time /= n;
+			
+			writeToFile(res.excelFormat() + "\n");
+			System.out.println(res.excelFormat());
+		}
+		System.out.println("\n");
+		writeToFile("\n");
+	}
+	
+	public static void runTopDownLinear(Input i, LinearGrammar g, int n) {
+		System.out.println("Top-down Linear " + i.getName() + "\n");
+		writeToFile("Top-down Linear " + i.getName() + "\n");
+		
+		while (i.hasMoreElements()) {
+			System.gc();
 			Result res = new Result();
 			String s = i.nextElement();
 			for (int j = 0; j < n; j++) {

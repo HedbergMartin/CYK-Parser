@@ -2,7 +2,7 @@ package main;
 
 public class OpenClose extends Input {
 
-	String opener, closer, head = "", tail = "";
+	String opener, closer, head = "", tail = "", middle = "";
 	
 	public OpenClose(int start, int increment, int end, String opener, String closer) {
 		super(start, increment, end);
@@ -15,6 +15,11 @@ public class OpenClose extends Input {
 		this.head = head;
 		this.tail = tail;
 	}
+	
+	public OpenClose(int start, int increment, int end, String opener, String closer, String head, String tail, String middle) {
+		this(start, increment, end, opener, closer, head, tail);
+		this.middle = middle;
+	}
 
 	@Override
 	public String nextElement() {
@@ -22,6 +27,7 @@ public class OpenClose extends Input {
 		for (int i = 0; i < count; i++) {
 			next += opener;
 		}
+		next += middle;
 		for (int i = 0; i < count; i++) {
 			next += closer;
 		}
@@ -32,6 +38,6 @@ public class OpenClose extends Input {
 
 	@Override
 	public String getName() {
-		return this.head + this.opener + this.opener + ".." + this.closer + this.closer + this.tail;
+		return this.head + this.opener + this.opener + "." + this.middle + "." + this.closer + this.closer + this.tail;
 	}
 }
