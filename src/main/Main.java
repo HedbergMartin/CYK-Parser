@@ -1,12 +1,12 @@
 package main;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import main.grammar.ChomskyGrammar;
-import main.grammar.Grammar;
 import main.parser.Parser;
 import main.parser.Result;
 
@@ -17,14 +17,15 @@ public class Main {
 	public static void main(String[] args) {
 		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		Date date = new Date(System.currentTimeMillis());
-		filename = "tests" + formatter.format(date) + ".txt";
+		new File("output").mkdir();
+		filename = "output/tests" + formatter.format(date) + ".txt";
 		
-		Grammar g = new ChomskyGrammar("parentheses.txt");
+		ChomskyGrammar g = new ChomskyGrammar("parentheses.txt");
 
 		runBottomUp(g);
 		
 		runTopDown(g);
-		
+//		
 //		runBottomUpBaseCase(g);
 //		runTopDownSlow(g);
 //		runTopDownFast(g);
@@ -47,22 +48,22 @@ public class Main {
 		}
 	}
 
-	public static void runBottomUp(Grammar g) {
+	public static void runBottomUp(ChomskyGrammar g) {
 		runBottomUpBaseCase(g);
 		runBottomUpEarlyRule(g);
 		runBottomUpEarlyVsLate(g);
 		runBottomUpUnknownClose(g);
 	}
 
-	public static void runTopDown(Grammar g) {
+	public static void runTopDown(ChomskyGrammar g) {
 		runTopDownBaseCase(g);
 		runTopDownEarlyRule(g);
 		runTopDownEarlyVsLate(g);
 		runTopDownUnknownClose(g);
 	}
 	
-	public static void runBottomUpBaseCase(Grammar g) {
-		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+	public static void runBottomUpBaseCase(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 2500/2;
 
 		runBottomUpBenchmark(new Repeat(increment, increment, end, "()"), g);
@@ -74,8 +75,8 @@ public class Main {
 		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", ")", "("), g);
 	}
 
-	public static void runBottomUpEarlyRule(Grammar g) {
-		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+	public static void runBottomUpEarlyRule(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 2500/2;
 
 		//See basecase
@@ -83,8 +84,8 @@ public class Main {
 		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", "()", "()"), g);
 	}
 
-	public static void runBottomUpEarlyVsLate(Grammar g) {
-		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+	public static void runBottomUpEarlyVsLate(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 2500/2;
 
 		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", ")", ""), g);
@@ -96,8 +97,8 @@ public class Main {
 		runBottomUpBenchmark(new OpenClose(increment, increment, end, "(", ")", "", "("), g);
 	}
 
-	public static void runBottomUpUnknownClose(Grammar g) {
-		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+	public static void runBottomUpUnknownClose(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 2500/2;
 
 		runBottomUpBenchmark(new Repeat(increment, increment, end, "()", "(", ""), g);
@@ -110,8 +111,8 @@ public class Main {
 	}
 	
 	// Top-down part
-	public static void runTopDownBaseCase(Grammar g) {
-		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+	public static void runTopDownBaseCase(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 2500/2;
 
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()"), g, 1);
@@ -123,17 +124,18 @@ public class Main {
 		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", ")", "("), g, 1);
 	}
 
-	public static void runTopDownEarlyRule(Grammar g) {
-		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+	public static void runTopDownEarlyRule(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 2500/2;
 
 		//See basecase
+//		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")"), g, 1);
 		
 		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "()", "()"), g, 1);
 	}
 
-	public static void runTopDownEarlyVsLate(Grammar g) {
-		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+	public static void runTopDownEarlyVsLate(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 2500/2;
 
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()", ")", ""), g, 1);
@@ -145,8 +147,8 @@ public class Main {
 		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "", "("), g, 1);
 	}
 
-	public static void runTopDownUnknownClose(Grammar g) {
-		int increment = 100/2; //Divide by 2 becouse repeat/opener-closer has len of 2.
+	public static void runTopDownUnknownClose(ChomskyGrammar g) {
+		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
 		int end = 2500/2;
 
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()", "(", ""), g, 1);
@@ -158,7 +160,7 @@ public class Main {
 		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")", "", ")"), g, 1);
 	}
 	
-	public static void runTopDownSlow(Grammar g) {
+	public static void runTopDownSlow(ChomskyGrammar g) {
 		int increment = 100/2;
 		int end = 2500/2;
 		
@@ -167,7 +169,7 @@ public class Main {
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()", "", "("), g, 1);
 	}
 	
-	public static void runTopDownFast(Grammar g) {
+	public static void runTopDownFast(ChomskyGrammar g) {
 		int increment = 400/2;
 		int end = 10000/2;
 		
@@ -177,7 +179,7 @@ public class Main {
 	}
 	
 	public static void runStupid() {
-		Grammar g = new ChomskyGrammar("stupid.txt");
+		ChomskyGrammar g = new ChomskyGrammar("stupid.txt");
 		int increment = 100/2;
 		int end = 2500/2;
 		
@@ -186,7 +188,7 @@ public class Main {
 		runTopDownBenchmark(new Stupid(increment, increment, end), g, 1);
 	}
 	
-	public static void runGroupedRepeat(Grammar g) {
+	public static void runGroupedRepeat(ChomskyGrammar g) {
 		int increment = 600;
 		int end = 10200;
 		
@@ -196,7 +198,7 @@ public class Main {
 
 	}
 	
-	public static void runTopDownOpen(Grammar g) {
+	public static void runTopDownOpen(ChomskyGrammar g) {
 		int increment = 100/2;
 		int end = 2500/2;
 		
@@ -208,7 +210,7 @@ public class Main {
 
 	}
 	
-	public static void runBottomUpBenchmark(Input i, Grammar g) {
+	public static void runBottomUpBenchmark(Input i, ChomskyGrammar g) {
 		System.out.println("Bottom-up " + i.getName() + "\n");
 		writeToFile("Bottom-up " + i.getName());
 		
@@ -222,7 +224,7 @@ public class Main {
 		writeToFile("\n");
 	}
 	
-	public static void runNaive(Input i, Grammar g) {
+	public static void runNaive(Input i, ChomskyGrammar g) {
 		System.out.println("Naive " + i.getName() + "\n");
 		writeToFile("Naive " + i.getName());
 		
@@ -237,7 +239,7 @@ public class Main {
 		writeToFile("\n");
 	}
 	
-	public static void runTopDownBenchmark(Input i, Grammar g, int n) {
+	public static void runTopDownBenchmark(Input i, ChomskyGrammar g, int n) {
 		System.out.println("Top-down " + i.getName() + "\n");
 		writeToFile("Top-down " + i.getName());
 		

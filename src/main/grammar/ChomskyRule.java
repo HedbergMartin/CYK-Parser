@@ -1,10 +1,10 @@
 package main.grammar;
 
-public class Rhs {
+public class ChomskyRule {
 	public int B;
 	public int C;
 	
-	public Rhs(int B, int C) {
+	public ChomskyRule(int B, int C) {
 		this.B = B;
 		this.C = C;
 	}

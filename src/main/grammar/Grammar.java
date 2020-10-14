@@ -1,13 +1,15 @@
 package main.grammar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public abstract class Grammar {
+public abstract class Grammar<Rhs> {
 	private ArrayList<ArrayList<Rhs>> rules;
 	
 	private ArrayList<ArrayList<Character>> terminalRules;
 	
-	public int amountOfNonTerminals = 0;
+	//Used during init only
+	private HashMap<Character, Integer> nonTerminals = new HashMap<Character, Integer>();
 	
 	public Grammar() {
 		terminalRules = new ArrayList<ArrayList<Character>>();
@@ -34,11 +36,11 @@ public abstract class Grammar {
 	}
 	
 	
-	public void addRule(int A, int B, int C) {
+	public void addRule(int A, Rhs rhs) {
 		while (rules.size() <= A) {
 			rules.add(new ArrayList<Rhs>());
 		}
-		rules.get(A).add(new Rhs(B, C));
+		rules.get(A).add(rhs);
 	}
 	
 	public Rhs getRule(int A, int n) {
@@ -50,6 +52,21 @@ public abstract class Grammar {
 			return 0;
 		}
 		return rules.get(nonTerminal).size();
+	}
+	
+	public int getNonTerminalID(char nonTerminal) {
+		if (!nonTerminals.containsKey(nonTerminal)) {
+			nonTerminals.put(nonTerminal, nonTerminals.size());
+		}
+		return nonTerminals.get(nonTerminal);
+	}
+	
+	public boolean isNonTerminal(char key) {
+		return nonTerminals.containsKey(key);
+	}
+	
+	public int getAmountOfNonTerminals() {
+		return nonTerminals.size();
 	}
 	
 	public abstract int getInitial();

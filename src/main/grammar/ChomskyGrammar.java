@@ -2,10 +2,13 @@ package main.grammar;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.Scanner;
 
-public class ChomskyGrammar extends Grammar {
+public class ChomskyGrammar extends Grammar<ChomskyRule> {
+	
+	public ChomskyGrammar() {
+		
+	}
 
 	public ChomskyGrammar(String fileName) {
 		try {
@@ -21,35 +24,25 @@ public class ChomskyGrammar extends Grammar {
 		FileInputStream stream = new FileInputStream(fileName);
 		Scanner fileScanner = new Scanner(stream, "ASCII");
 		
-		HashMap<Character, Integer> nonTerminals = new HashMap<Character, Integer>();
 		while (fileScanner.hasNextLine()) {
 			String line = fileScanner.nextLine();
 			if (line.length() == 4) { //To non-terminals
 				addRule(
-				getNonTerminalID(nonTerminals, line.charAt(0)),
-				getNonTerminalID(nonTerminals, line.charAt(2)),
-				getNonTerminalID(nonTerminals, line.charAt(3))
+				getNonTerminalID(line.charAt(0)),
+				new ChomskyRule(getNonTerminalID(line.charAt(2)), 
+								getNonTerminalID(line.charAt(3)))
 				);
 			} else if (line.length() == 3) { //To terminal
-				addTerminal(getNonTerminalID(nonTerminals, line.charAt(0)), line.charAt(2));
+				addTerminal(getNonTerminalID(line.charAt(0)), line.charAt(2));
 			} else if (line.length() != 0) {
 				fileScanner.close();
 				stream.close();
 				throw new Exception("File format error");
 			}
 		}
-
-		amountOfNonTerminals = nonTerminals.size();
 		
 		fileScanner.close();
 		stream.close();
-	}
-	
-	private int getNonTerminalID(HashMap<Character, Integer> nonTerminals, char nonTerminal) {
-		if (!nonTerminals.containsKey(nonTerminal)) {
-			nonTerminals.put(nonTerminal, nonTerminals.size());
-		}
-		return nonTerminals.get(nonTerminal);
 	}
 
 	@Override

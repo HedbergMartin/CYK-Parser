@@ -1,13 +1,13 @@
 package main.parser;
 
-import main.grammar.Grammar;
-import main.grammar.Rhs;
+import main.grammar.ChomskyGrammar;
+import main.grammar.ChomskyRule;
 
 public class Parser {
 	
 	final static long NANOSEC = 1000000000;
 
-	public static Result parseNaive(String s, Grammar g) {
+	public static Result parseNaive(String s, ChomskyGrammar g) {
 		Result r = new Result();
 		long start = System.nanoTime();
 		r.wasFound = parseNaiveRec(r, s, g, g.getInitial(), 0, s.length());
@@ -19,11 +19,11 @@ public class Parser {
 	
 
 
-	private static boolean parseNaiveRec(Result r, String s, Grammar g, int nonTerminal, int i, int j) {
+	private static boolean parseNaiveRec(Result r, String s, ChomskyGrammar g, int nonTerminal, int i, int j) {
 		if (i == j-1) {
 			return g.isTerminalRule(nonTerminal, s.charAt(i));
 		} else {
-			Rhs rhs;
+			ChomskyRule rhs;
 			for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
 				rhs = g.getRule(nonTerminal, ruleNr);
 				for (int k = i + 1; k <= j - 1; k++) {
@@ -36,14 +36,14 @@ public class Parser {
 		return false;
 	}
 	
-	public static Result parseBottomUp(String s, Grammar g) {
+	public static Result parseBottomUp(String s, ChomskyGrammar g) {
 		Result r = new Result();
 		r.strLen = s.length();
 		long start = System.nanoTime();
 		boolean found = false;
-		boolean[][][] table = new boolean[g.amountOfNonTerminals][s.length()][s.length()];
+		boolean[][][] table = new boolean[g.getAmountOfNonTerminals()][s.length()][s.length()];
 		for (int i = 0; i < s.length(); i++) {
-			for (int j = 0; j < g.amountOfNonTerminals; j++) {
+			for (int j = 0; j < g.getAmountOfNonTerminals(); j++) {
 				table[j][0][i] = g.isTerminalRule(j, s.charAt(i));
 			}
 		}
@@ -51,9 +51,9 @@ public class Parser {
 		for (int l = 1; l < s.length(); l++) {
 			for (int i = 0; i < s.length() - l; i++) {
 				nonTerminalLoop:
-				for (int nonTerminal = 0; nonTerminal < g.amountOfNonTerminals; nonTerminal++) {
+				for (int nonTerminal = 0; nonTerminal < g.getAmountOfNonTerminals(); nonTerminal++) {
 					for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
-						Rhs rhs = g.getRule(nonTerminal, ruleNr);
+						ChomskyRule rhs = g.getRule(nonTerminal, ruleNr);
 
 						for (int p = 0; p < l; p++) {
 							if (table[rhs.B][p][i] && table[rhs.C][l-p-1][i+p+1]) {
@@ -76,12 +76,12 @@ public class Parser {
 		return r;
 	}
 	
-	public static Result parseTopDown(String s, Grammar g) {
+	public static Result parseTopDown(String s, ChomskyGrammar g) {
 
 		Result r = new Result();
 		long start = System.nanoTime();
 		//0 == null, 1 == no, 2 == yes
-		byte[][][] table = new byte[g.amountOfNonTerminals][s.length()][s.length()];
+		byte[][][] table = new byte[g.getAmountOfNonTerminals()][s.length()][s.length()];
 		r.wasFound = parseTopDownRec(r, s, g, table, g.getInitial(), 0, s.length());
 		long end = System.nanoTime();
 		r.time = (double)(end - start) / NANOSEC;
@@ -90,7 +90,7 @@ public class Parser {
 	}
 	
 	//nonTerminal + i * g.amountOfNonTerminals + (j-1) * g.amountOfNonTerminals * s.length()
-	private static boolean parseTopDownRec(Result r, String s, Grammar g, byte[][][] table, int nonTerminal, int i, int j) {
+	private static boolean parseTopDownRec(Result r, String s, ChomskyGrammar g, byte[][][] table, int nonTerminal, int i, int j) {
 		int path;
 		if ((path = table[nonTerminal][i][j-1]) != 0) {
 			if (path == 2) {
@@ -101,7 +101,7 @@ public class Parser {
 		} else if (i == j-1) {
 			return g.isTerminalRule(nonTerminal, s.charAt(i));
 		} else {
-			Rhs rhs;
+			ChomskyRule rhs;
 			for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
 				rhs = g.getRule(nonTerminal, ruleNr);
 				for (int k = i + 1; k <= j - 1; k++) {
