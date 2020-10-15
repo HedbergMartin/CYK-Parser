@@ -24,11 +24,11 @@ public class Main {
 		ChomskyGrammar cg = new ChomskyGrammar("parentheses.txt");
 		LinearGrammar lg = new LinearGrammar("linear_grammar.txt");
 
-//		runBottomUp(cg);
-//		
-//		runTopDown(cg);
-//
-//		runStupid(cg);
+		runBottomUp(cg);
+		
+		runTopDown(cg);
+
+		runStupid();
 		
 		runTDlinear(lg);
 		try {
@@ -37,6 +37,8 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		runTDlinearToCNF(new ChomskyGrammar("linear_cnf.txt"));
 	}
 	
 	public static void writeToFile(String input) {
@@ -179,7 +181,7 @@ public class Main {
 	
 	public static void runTDlinearToCNF(ChomskyGrammar g) {
 		int increment = 100/2; //Divide by 2 because repeat/opener-closer has len of 2.
-		int end = 10000/2;
+		int end = 2500/2;
 
 		//runTopDownLinear(new Repeat(increment, increment, end, "()"), g, 1);
 		
@@ -194,10 +196,10 @@ public class Main {
 	
 	public static void runStupid() {
 		ChomskyGrammar g = new ChomskyGrammar("stupid.txt");
-		int increment = 100/2;
-		int end = 2500/2;
+		int increment = 100;
+		int end = 2500;
 		
-		runBottomUpBenchmark(new Stupid(increment, increment, end), g);
+//		runBottomUpBenchmark(new Stupid(increment, increment, end), g);
 
 		runTopDownBenchmark(new Stupid(increment, increment, end), g, 1);
 	}

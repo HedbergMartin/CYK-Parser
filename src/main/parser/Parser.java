@@ -121,7 +121,7 @@ public class Parser {
 		long start = System.nanoTime();
 		//0 == null, 1 == no, 2 == yes
 		byte[][][] table = new byte[g.getAmountOfNonTerminals()][s.length()][s.length()];
-		r.wasFound = parseTopDownRec(r, s, g, g.getInitial(), 0, s.length());
+		r.wasFound = parseTopDownRecLin(r, s, g, g.getInitial(), 0, s.length());
 		long end = System.nanoTime();
 		r.time = (double)(end - start) / NANOSEC;
 		r.strLen = s.length();
@@ -129,18 +129,18 @@ public class Parser {
 	}
 	
 	//nonTerminal + i * g.amountOfNonTerminals + (j-1) * g.amountOfNonTerminals * s.length()
-	private static boolean parseTopDownRec(Result r, String s, LinearGrammar g, int nonTerminal, int i, int j) {
+	private static boolean parseTopDownRecLin(Result r, String s, LinearGrammar g, int nonTerminal, int i, int j) {
 		if (i == j-1) {
 			return g.isTerminalRule(nonTerminal, s.charAt(i));
 		} else {
 			for (int ruleNr = 0; ruleNr < g.ruleSize(nonTerminal); ruleNr++) {
 				LinearRule rhs = g.getRule(nonTerminal, ruleNr);
 				if (rhs.nonToLeft) {
-					if ((rhs.term == s.charAt(j-1)) && parseTopDownRec(r, s, g, rhs.nont, i, j-1)) {
+					if ((rhs.term == s.charAt(j-1)) && parseTopDownRecLin(r, s, g, rhs.nont, i, j-1)) {
 						return true;
 					}
 				} else {
-					if ((rhs.term == s.charAt(i)) && parseTopDownRec(r, s, g, rhs.nont, i+1, j)) {
+					if ((rhs.term == s.charAt(i)) && parseTopDownRecLin(r, s, g, rhs.nont, i+1, j)) {
 						return true;
 					}
 				}

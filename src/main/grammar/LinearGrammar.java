@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.graalvm.compiler.nodes.calc.IsNullNode;
+
 public class LinearGrammar extends Grammar<LinearRule> {
 
 	public LinearGrammar(String fileName) {
@@ -77,6 +79,11 @@ public class LinearGrammar extends Grammar<LinearRule> {
 				fileScanner.close();
 				stream.close();
 				throw new Exception("Two nonterminals on rhs!");
+			}
+			if (grammar.isNonTerminal(r.left)) {
+				grammar.addTerminal(grammar.getNonTerminalID(r.right), r.right);
+			} else {
+				grammar.addTerminal(grammar.getNonTerminalID(r.left), r.left);
 			}
 			grammar.addRule(r.nont, new ChomskyRule(grammar.getNonTerminalID(r.left), grammar.getNonTerminalID(r.right)));
 		}
