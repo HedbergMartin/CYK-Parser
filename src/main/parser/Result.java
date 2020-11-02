@@ -1,6 +1,7 @@
 package main.parser;
 
 public class Result {
+	final static long NANOSEC = 1000000000;
 	
 	public boolean wasFound = false;
 	public int strLen = 0;

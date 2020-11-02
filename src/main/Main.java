@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import main.grammar.ChomskyGrammar;
+import main.grammar.ChomskyRule;
 import main.grammar.LinearGrammar;
-import main.parser.Parser;
+import main.parser.BottomUpParser;
+import main.parser.LinearParser;
+import main.parser.NaiveParser;
 import main.parser.Result;
+import main.parser.TopDownParser;
 
 public class Main {
 	
@@ -26,19 +31,19 @@ public class Main {
 
 		runBottomUp(cg);
 		
-		runTopDown(cg);
+//		runTopDown(cg);
 
-		runStupid();
+//		runStupid();
 		
-		runTDlinear(lg);
-		try {
-			runTDlinearToCNF(LinearGrammar.toChomsky("linear_grammar.txt"));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		runTDlinearToCNF(new ChomskyGrammar("linear_cnf.txt"));
+//		runTDlinear(lg);
+//		try {
+//			runTDlinearToCNF(LinearGrammar.toChomsky("linear_grammar.txt"));
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		runTDlinearToCNF(new ChomskyGrammar("linear_cnf.txt"));
 	}
 	
 	public static void writeToFile(String input) {
@@ -119,7 +124,7 @@ public class Main {
 		int end = 2500/2;
 
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()"), g, 1);
-		
+//		
 		runTopDownBenchmark(new Repeat(increment, increment, end, "()", ")", "("), g, 1);
 
 		runTopDownBenchmark(new OpenClose(increment, increment, end, "(", ")"), g, 1);
@@ -196,12 +201,15 @@ public class Main {
 	
 	public static void runStupid() {
 		ChomskyGrammar g = new ChomskyGrammar("stupid.txt");
+		int start = 100;
 		int increment = 100;
 		int end = 2500;
-		
-//		runBottomUpBenchmark(new Stupid(increment, increment, end), g);
 
-		runTopDownBenchmark(new Stupid(increment, increment, end), g, 1);
+
+		runBottomUpBenchmark(new Stupid(start, increment, end), g);
+		
+		runTopDownBenchmark(new Stupid(start, increment, end), g, 1);
+
 	}
 	
 	public static void runBottomUpBenchmark(Input i, ChomskyGrammar g) {
@@ -209,7 +217,7 @@ public class Main {
 		writeToFile("Bottom-up " + i.getName() + "\n");
 		
 		while (i.hasMoreElements()) {
-			Result res = Parser.parseBottomUp(i.nextElement(), g);
+			Result res = BottomUpParser.parse(i.nextElement(), g);
 
 			writeToFile(res.excelFormat() + "\n");
 			System.out.println(res.excelFormat());
@@ -224,7 +232,7 @@ public class Main {
 		
 		while (i.hasMoreElements()) {
 			String s = i.nextElement();
-			Result res = Parser.parseNaive(s, g);
+			Result res = NaiveParser.parse(s, g);
 
 			writeToFile(res.excelFormat() + "\n");
 			System.out.println(res.excelFormat());
@@ -241,7 +249,7 @@ public class Main {
 			Result res = new Result();
 			String s = i.nextElement();
 			for (int j = 0; j < n; j++) {
-				Result r = Parser.parseTopDown(s, g);
+				Result r = TopDownParser.parse(s, g);
 				res.wasFound = r.wasFound;
 				res.strLen = r.strLen;
 				res.time += r.time;
@@ -264,7 +272,7 @@ public class Main {
 			Result res = new Result();
 			String s = i.nextElement();
 			for (int j = 0; j < n; j++) {
-				Result r = Parser.parseTopDown(s, g);
+				Result r = LinearParser.parse(s, g);
 				res.wasFound = r.wasFound;
 				res.strLen = r.strLen;
 				res.time += r.time;
